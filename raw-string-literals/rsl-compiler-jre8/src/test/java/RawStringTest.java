@@ -1,4 +1,5 @@
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mdkt.compiler.InMemoryJavaCompiler;
 
@@ -18,9 +19,9 @@ public class RawStringTest {
 
 		// act
 		final Class clazz = compiler.compile("TestClass", sourceCode);
-
 		final Object o = clazz.newInstance();
 
+		// asssert
 		final String sayHelloWord = String.valueOf(clazz.getMethod("sayHello").invoke(o));
 		assertEquals("SELECT\n\tNAME, AGE\nFROM CUSTOMER\n", align(sayHelloWord));
 
@@ -32,7 +33,7 @@ public class RawStringTest {
 	}
 
 	@Test
-	public void s2() throws Exception {
+	public void shouldStillCompileOnClassWhoHasLambdas() throws Exception {
 
 		// arrange
 		final InMemoryJavaCompiler compiler = InMemoryJavaCompiler.newInstance();
@@ -43,10 +44,51 @@ public class RawStringTest {
 		// act
 		final Class clazz = compiler.compile("ClassWithLambdaExpression", sourceCode);
 
+		// assert
 		final Object o = clazz.newInstance();
+		final String selectQuery = (String) clazz.getMethod("sayHello").invoke(o);
+		assertEquals("SELECT\n\tNAME, AGE\nFROM CUSTOMER\n", align(selectQuery));
 
+	}
+
+	// not supported yet
+	@Test
+	@Ignore
+	public void shouldCompileVarInsideLambda() throws Exception {
+
+		// arrange
+		final InMemoryJavaCompiler compiler = InMemoryJavaCompiler.newInstance();
+
+
+		final String sourceCode = IOUtils.toString(getClass().getResourceAsStream("/VariableInsideLambda.java"));
+
+		// act
+		final Class clazz = compiler.compile("VariableInsideLambda", sourceCode);
+		final Object o = clazz.newInstance();
 		final String selectQuery = (String) clazz.getMethod("sayHello").invoke(o);
 
+		// assert
+		assertEquals("SELECT\n\tNAME, AGE\nFROM CUSTOMER\n", align(selectQuery));
+
+	}
+
+	// not supported yet
+	@Test
+	@Ignore
+	public void shouldCompileInstanceField() throws Exception {
+
+		// arrange
+		final InMemoryJavaCompiler compiler = InMemoryJavaCompiler.newInstance();
+
+
+		final String sourceCode = IOUtils.toString(getClass().getResourceAsStream("/InstanceFieldClass.java"));
+
+		// act
+		final Class clazz = compiler.compile("InstanceFieldClass", sourceCode);
+		final Object o = clazz.newInstance();
+		final String selectQuery = (String) clazz.getMethod("sayHello").invoke(o);
+
+		// assert
 		assertEquals("SELECT\n\tNAME, AGE\nFROM CUSTOMER\n", align(selectQuery));
 
 	}
