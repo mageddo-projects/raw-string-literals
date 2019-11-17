@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+
+	compileOnly('com.mageddo:rsl:1.0.0')
+	annotationProcessor('com.mageddo:rsl-compiler:1.0.1')
+
+	testCompileOnly('com.mageddo:rsl:1.0.0')
+	testAnnotationProcessor('com.mageddo:rsl-compiler:1.0.1')
+
+	testCompile 'junit:junit:4.12'
+}
